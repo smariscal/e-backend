@@ -2,8 +2,8 @@ class Usuario {
   constructor(nombre, apellido, libros, mascotas) {
     this.nombre = nombre;
     this.apellido = apellido;
-    this.libros = libros;
-    this.mascotas = mascotas;
+    this.libros = libros || [];
+    this.mascotas = mascotas || [];
   }
 
   getFullName(){
@@ -34,7 +34,7 @@ class Usuario {
 
 const run = () => {
   // Creo usuario
-  const user1 = new Usuario('Pedro', 'Picapiedra', [], []);
+  const user1 = new Usuario('Pedro', 'Picapiedra');
 
   // Agrego los nombres de las mascotas de user1
   user1.addMascota('toby');
