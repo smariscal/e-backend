@@ -12,9 +12,6 @@ class Contenedor {
       (products.length === 0) ? products = [] : products = JSON.parse(products);
       let id = products.length ? products[products.length-1].id + 1 : 1;  // ultimo id + 1
       products.push({...obj, id: id});
-
-      console.log(products);
-
       // grabo el objeto en el archivo
       await fs.promises.writeFile(this.nameFile, JSON.stringify(products));
       // devuelvo id utilizado
@@ -31,7 +28,6 @@ class Contenedor {
       products = JSON.parse(products);
       // devuelvo array con el producto que coincide el id
       let product = products.filter(p => p.id === id);
-      console.log(product);
       return product;
     }catch(e){
       console.log(e)
@@ -43,7 +39,6 @@ class Contenedor {
       // devuelvo todo lo que tiene el txt
       let products = await fs.promises.readFile(this.nameFile, 'utf-8');
       products = JSON.parse(products);
-      console.log(products);
       return products = await fs.promises.readFile(this.nameFile, 'utf-8');
     }catch(e){
       console.log(e)
@@ -73,25 +68,3 @@ class Contenedor {
     } 
   }
 }
-
-const run = () => {
-  const cont1 = new Contenedor('./Mock/ProductsMock.txt');
-  // const obj1 = {name:'Mesa', precio:500, url:'img/Mesa.jpg'};
-  // const obj1 = {name:'Silla', precio:50, url:'img/Silla.jpg'};
-  // const obj1 = {name:'Mesada', precio:700, url:'img/Mesada.jpg'};
-  // const obj1 = {name:'Ratona', precio:250, url:'img/Ratona.jpg'};
-  // const obj1 = {name:'Mesa de luz', precio:250, url:'img/Mesa_de_luz.jpg'};
-  // const obj1 = {name:'Rack', precio:350, url:'img/Rack.jpg'};
-
-  // cont1.save(obj1);
-
-  //cont1.getById(3);
-
-  //cont1.getAll();
-
-  //cont1.deleteById(1);
-
-  //cont1.deleteAll();
-}
-
-run()
