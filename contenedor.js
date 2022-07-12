@@ -39,7 +39,7 @@ class Contenedor {
       // devuelvo todo lo que tiene el txt
       let products = await fs.promises.readFile(this.nameFile, 'utf-8');
       products = JSON.parse(products);
-      return products = await fs.promises.readFile(this.nameFile, 'utf-8');
+      return products;
     }catch(e){
       console.log(e)
     }
@@ -68,3 +68,5 @@ class Contenedor {
     } 
   }
 }
+
+module.exports = Contenedor;
