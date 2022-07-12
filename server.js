@@ -39,8 +39,8 @@ app.get('/productoRandom', async (req, res) =>{
   try{
     let prods = await data.getAll();
     res.send(prods[Math.floor(Math.random() * prods.length)]);
-  } 
-  catch(err){
-    console.log("error", err);
+  }   
+  catch(e){
+    console.log("error", e);
   }  
 })
