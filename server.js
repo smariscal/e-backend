@@ -1,5 +1,5 @@
 const express = require('express');
-const Contenedor = require('./Contenedor.js');
+const Contenedor = require('./contenedor.js');
 
 const app = express();
 const PORT = 8080;
