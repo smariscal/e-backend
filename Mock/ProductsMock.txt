@@ -1,1 +1,1 @@
-[{"name":"Azúcar","price":190,"thumbnail":"https://prod","id":1},{"name":"Yerba","price":799,"thumbnail":"https://yerba","id":2},{"name":"Sal","price":350,"thumbnail":"https://yerba","id":3},{"name":"Polenta","price":99,"thumbnail":"https://polenta","id":4}]
+[{"name":"Yerba","price":799,"thumbnail":"https://yerba","id":2},{"name":"Sal","price":350,"thumbnail":"https://Sal","id":3},{"name":"Polenta","price":99,"thumbnail":"https://polenta","id":4}]

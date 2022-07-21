@@ -25,14 +25,20 @@ class Contenedor {
     try{
       // recupero productos
       let products = await fs.promises.readFile(this.nameFile, 'utf-8');
-      products = JSON.parse(products);
-      // devuelvo array con el producto que coincide el id
-      let product = products.filter(p => p.id === id);
-      return product;
+      return JSON.parse(products).find(p => p.id === id) 
     }catch(e){
       console.log(e)
     }
    }
+
+   async update(products){
+    try{
+      await fs.promises.writeFile(this.nameFile, JSON.stringify(products)); 
+    }
+    catch(err){
+      console.log("error", err);
+    }
+  }
 
    async getAll(){
     try{
@@ -47,12 +53,17 @@ class Contenedor {
 
    async deleteById(id){
     try{
-      // recuper productos
-      let products = await fs.promises.readFile(this.nameFile, 'utf-8');
-      products = JSON.parse(products);
-      // filtro los productos que no tienen ese id y sobreescribo la variable
-      products = products.filter(p => p.id !== id);
-      fs.promises.writeFile(this.nameFile, JSON.stringify(products));  // grabo en el txt
+      // recupero producto
+      let prod = await this.getById(id);
+      if (prod){
+        // recuper productos
+        let products = await fs.promises.readFile(this.nameFile, 'utf-8');
+        products = JSON.parse(products);
+        // filtro los productos que no tienen ese id y sobreescribo la variable
+        this.update(products.filter(p => p.id !== id));
+        return id;
+      }
+      return 0; // devuelvo 0 como no encontrado
     }catch(e){
       console.log(e);
     }
