@@ -1,0 +1,20 @@
+html
+  head
+    link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous")
+  body
+    div(class="container")
+      div(class="row justify-content-md-center")
+        div(class="col col-lg-6")
+          form(class="form-group" action="/products" method="POST")
+            div(class="mb-3")
+              label(class="form-label" for="name")='Nombre'
+              input(class="form-control" type="text" id="name" name="name" required)
+            div(class="mb-3")
+              label(class="form-label" for="price")='Precio'
+              input(class="form-control" type="number" id="price" name="price" required)
+            div(class="mb-3")
+              label(class="form-label" for="thumbnail")='Imagen'
+              input(class="form-control" type="text" id="thumbnail" name="thumbnail" required)
+            button(class="btn btn-primary" type="submit")='Confirmar'
+            button(class="btn btn-danger" type="reset")='Borrar'
+          a(href="products" class="btn btn-primary" role="button")='Ver productos'
