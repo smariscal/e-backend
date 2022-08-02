@@ -1,0 +1,19 @@
+{{#if (isdefined prods)}}
+  <table class="table">
+    <tr>
+      <th>Titulo</th>
+      <th>Precio</th>
+      <th>imagen</th>
+    </tr> 
+    {{#each prods}}
+    <tr>
+      <td>{{this.name}}</td>
+      <td>{{this.price}}</td>
+      <td><img src={{this.thumbnail}}></td>
+    </tr>
+    {{/each}}
+  </table>  
+{{else}}  
+  <p>No existen productos</p>
+{{/if}}
+<a href="/" class="btn btn-primary" role="button">Agregar producto</a>  
