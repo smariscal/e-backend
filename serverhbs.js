@@ -3,7 +3,7 @@ const routerProducts = require('./routes/products');
 const handlebars = require('express-handlebars');
 
 const app = express();
-const PORT = 8080;
+const PORT = 3000;
 
 const hbs = handlebars.create({
   extname: ".hbs",
@@ -11,7 +11,7 @@ const hbs = handlebars.create({
   layoutsDir: __dirname + "/public/hbs/views/layouts",
   partialsDir: __dirname + "/public/hbs/views/partials/",
   helpers: {
-    isdefined: function (value) { return value !== undefined;}
+    isdefined: function (value) { return ((value != undefined) && (value.length != 0));}
   },
 });
 
