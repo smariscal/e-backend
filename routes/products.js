@@ -2,8 +2,8 @@ const { Router } = require("express")
 const Contenedor = require('../contenedor.js');
 const ContenedorMem = require('../contenedorMem.js');
 
-//const data = new Contenedor('./Mock/ProductsMock.txt');
-const data = new ContenedorMem();
+const data = new Contenedor('./Mock/products.txt');
+//const data = new ContenedorMem();
 
 const routerProducts = new Router();
 
