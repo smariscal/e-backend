@@ -1,0 +1,14 @@
+<table class="table text-light">
+  <tr>
+    <th>Titulo</th>
+    <th>Precio</th>
+    <th>imagen</th>
+  </tr> 
+  {{#each prods}}
+  <tr>
+    <td>{{this.name}}</td>
+    <td>{{this.price}}</td>
+    <td><img src={{this.thumbnail}}></td>
+  </tr>
+  {{/each}}
+</table>
