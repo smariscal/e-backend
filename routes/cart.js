@@ -53,7 +53,7 @@ routerCart.post('/:id/productos', async (req, res) => {
     if (index !== -1) {
       if (carts[index].products.find(p => p.id === req.body.id)){
         // To-Do sumar cantidad del mismo item en el carrito
-        res.status(201).json(`Carrito ${id} ya tiene el producto ${req.body.name}`);
+        res.status(200).json(`Carrito ${id} ya tiene el producto ${req.body.name}`);
       } else {        
         carts[index].products.push(req.body);
         await data.update(carts);
