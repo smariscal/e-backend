@@ -1,10 +1,7 @@
 const { Router } = require("express")
 const Contenedor = require('../contenedor.js');
-const { isAuthenticated } = require('../middlewares/auth')
-const ContenedorMem = require('../contenedorMem.js');
 
-const data = new Contenedor('./Mock/products.txt');
-//const data = new ContenedorMem();
+const data = new Contenedor('product');
 
 const routerProducts = new Router();
 
@@ -32,17 +29,16 @@ routerProducts.get('/:id', async (req, res) =>{
   }
 });
 
-routerProducts.post('/', isAuthenticated, async (req, res) => {
+routerProducts.post('/', async (req, res) => {
   try {
-    const add = req.body;
-    let id = await data.save(add);
-    res.status(201).json(`Producto creado con el id ${id}`)
+    await data.save(req.body);
+    res.redirect('/');
   } catch (e) {
     console.error(e);
   }
 });
 
-routerProducts.put('/:id', isAuthenticated, async (req, res) => {
+routerProducts.put('/:id', async (req, res) => {
   const id = parseInt(req.params.id);
   try {
     const update = req.body;
@@ -71,7 +67,7 @@ routerProducts.put('/:id', isAuthenticated, async (req, res) => {
   }
 });
 
-routerProducts.delete('/:id', isAuthenticated, async (req, res) => {
+routerProducts.delete('/:id', async (req, res) => {
   const id = parseInt(req.params.id);
   try{
     let response = await data.deleteById(id);

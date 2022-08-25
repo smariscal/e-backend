@@ -1,36 +1,60 @@
 const express = require('express');
-const cors = require('cors');
 const routerProducts = require('./routes/products');
-const routerCart = require('./routes/cart');
-
+const handlebars = require('express-handlebars');
+const http = require('http');
 const app = express();
+const server = http.createServer(app);
+const Contenedor = require('./contenedor.js');
+const { Server } = require('socket.io');
+const io = new Server(server);
 
-const PORT = 80;
+const PORT = 3000;
+
+const hbs = handlebars.create({
+  extname: ".hbs",
+  defaultLayout: "index.hbs",
+  layoutsDir: __dirname + "/hbs/views/layouts",
+  partialsDir: __dirname + "/hbs/views/partials",
+  helpers: {
+    isdefined: function (value) { return ((value != undefined) && (value.length != 0));}
+  },
+});
 
 app.use(express.static("public"));
+
+app.engine("hbs", hbs.engine);
+app.set('views', "./hbs/views");
+app.set("view engine", "hbs");
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-// permite ser utilizado desde cualquier host
-app.use(cors({
-  origin: '*'
-}));
+let container = new Contenedor("product");
+let container2 = new Contenedor("message");
 
-app.use("/api/products", routerProducts);
-app.use("/api/cart", routerCart);
-
-// error 404 si no existe la ruta
-app.use((req, res) => {
-  const response = {
-    error: -2,
-    descripcion: `${req.url} ${req.method} no implementado`
-  };
-  res.status(404).json(response);
+io.on("connection", async (socket) => {
+  // tomo los mensajes hasta el momento
+  io.emit("update-messages", await container2.getAll());
+  // tomo los productos hasta el momento
+  socket.emit("products", await container.getAll());
+  // posteo mensaje y lo grabo
+  socket.on("post-message", async (msg) => {
+    const message = {
+      ...msg,
+      messagesocketid: socket.id
+    };
+    await container2.save(message);
+    io.emit("update-messages", await container2.getAll());
+  });
 });
 
+app.get('/',(req, res) =>{
+  res.render("main");
+})
 
-const listen = app.listen(PORT, ()=> {
+app.use("/products", routerProducts);
+
+const listen = server.listen(PORT, ()=> {
   console.log(`Servidor en puerto: ${PORT}`)
 });
 
