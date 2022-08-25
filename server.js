@@ -7,8 +7,10 @@ const server = http.createServer(app);
 const Contenedor = require('./contenedor.js');
 const { Server } = require('socket.io');
 const io = new Server(server);
+const dotenv = require("dotenv");
+dotenv.config();
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 const hbs = handlebars.create({
   extname: ".hbs",

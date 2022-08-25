@@ -1,4 +1,4 @@
-const dotenv = require("dotenv")
+const dotenv = require("dotenv");
 dotenv.config();
 
 const DATABASE_HOST = process.env.DATABASE_HOST || "127.0.0.1";
