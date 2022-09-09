@@ -1,19 +1,19 @@
 const fs = require("fs");
 
-class Contenedor {
+class Contenedorfile {
   constructor(nameFile) {
     this.nameFile = nameFile;
   }
   
   async save(obj){
     try{      
-      let cont = await fs.promises.readFile(this.nameFile, 'utf-8');
+      let data = await fs.promises.readFile(this.nameFile, 'utf-8');
       // Busco ultimo id
-      (cont.length === 0) ? cont = [] : cont = JSON.parse(cont);
-      let id = cont.length ? cont[cont.length-1].id + 1 : 1;  // ultimo id + 1
-      cont.push({...obj, id: id});
+      (data.length === 0) ? data = [] : data = JSON.parse(data);
+      let id = data.length ? data[data.length-1].id + 1 : 1;  // ultimo id + 1
+      data.push({...obj, id: id});
       // grabo el objeto en el archivo
-      await fs.promises.writeFile(this.nameFile, JSON.stringify(cont));
+      await fs.promises.writeFile(this.nameFile, JSON.stringify(data));
       // devuelvo id utilizado
       return id;
     }catch(e){
@@ -24,16 +24,16 @@ class Contenedor {
    async getById(id){
     try{
       // recupero contenedor
-      let cont = await fs.promises.readFile(this.nameFile, 'utf-8');
-      return JSON.parse(cont).find(p => p.id === id) 
+      let data = await fs.promises.readFile(this.nameFile, 'utf-8');
+      return JSON.parse(data).find(p => p.id == id) 
     }catch(e){
       console.log(e)
     }
    }
 
-   async update(cont){
+   async update(data){
     try{
-      await fs.promises.writeFile(this.nameFile, JSON.stringify(cont)); 
+      await fs.promises.writeFile(this.nameFile, JSON.stringify(data)); 
     }
     catch(err){
       console.log("error", err);
@@ -43,9 +43,9 @@ class Contenedor {
    async getAll(){
     try{
       // devuelvo todo lo que tiene el txt
-      let cont = await fs.promises.readFile(this.nameFile, 'utf-8');
-      cont = JSON.parse(cont);
-      return cont;
+      let data = await fs.promises.readFile(this.nameFile, 'utf-8');
+      data = JSON.parse(data);
+      return data;
     }catch(e){
       console.log(e)
     }
@@ -57,10 +57,10 @@ class Contenedor {
       let c = await this.getById(id);
       if (c){
         // recuper contenedor
-        let cont = await fs.promises.readFile(this.nameFile, 'utf-8');
-        cont = JSON.parse(cont);
+        let data = await fs.promises.readFile(this.nameFile, 'utf-8');
+        data = JSON.parse(data);
         // filtro los contenedores que no tienen ese id y sobreescribo la variable
-        this.update(cont.filter(p => p.id !== id));
+        this.update(data.filter(p => p.id != id));
         return id;
       }
       return 0; // devuelvo 0 como no encontrado
@@ -72,12 +72,12 @@ class Contenedor {
   async deleteAll(){
     try{
       // elimino todos los objetos
-      let cont = [];
-      await fs.promises.writeFile(this.nameFile, JSON.stringify(cont));
+      let data = [];
+      await fs.promises.writeFile(this.nameFile, JSON.stringify(data));
     }catch(e){
       console.log(e);
     } 
   }
 }
 
-module.exports = Contenedor;
+module.exports = Contenedorfile;
