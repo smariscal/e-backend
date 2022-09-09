@@ -19,27 +19,27 @@ recupera todos los productos
 POST api/products/
 graba nuevo producto
 
-GET api/products/<id>
-recupera producto <id>
+GET api/products/:id
+recupera producto :id
 
-PUT api/products/<id>
-actualiza producto <id>
+PUT api/products/:id
+actualiza producto :id
 
-DELETE api/products/<id>
-elimina producto <id>
+DELETE api/products/:id
+elimina producto :id
 
 # Rutas utilizadas carrito
 POST api/cart
 crea un nuevo carrito
 
-GET api/cart/<id>/productos
-recupera los productos del carrito <id>
+GET api/cart/:id/productos
+recupera los productos del carrito :id
 
-POST api/cart/<id>/productos
-agrega producto al carrito <id>
+POST api/cart/:id/productos
+agrega producto al carrito :id
 
-DELETE api/cart/<id>
-elimina el carrito <id>
+DELETE api/cart/:id
+elimina el carrito :id
 
-DELETE api/cart/<id>/productos/<idprod>
-elimina el producto <idprod> del carrito <id>
+DELETE api/cart/:id/productos/:idprod
+elimina el producto :idprod del carrito :id
