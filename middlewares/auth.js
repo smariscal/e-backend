@@ -1,4 +1,4 @@
-let isAdmin = true;  // hardcodeado en false
+let isAdmin = true;  // hardcodeado
 
 const isAuthenticated = (req, res, next) =>{
   if (isAdmin){

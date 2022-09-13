@@ -19,7 +19,7 @@ class Contenedormongodb {
     try {
       id = Types.ObjectId(id);
       let item = data.find(el => el.id == id);
-      await this.Schema.replaceOne({id: id}, item)      
+      await this.Schema.replaceOne({_id: id}, item)      
     } catch (err) {
       console.log(err)
     }
