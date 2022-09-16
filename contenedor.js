@@ -1,57 +1,22 @@
-const fs = require("fs");
-const knex = require('knex');
-const knexConfig = require('./knexfile');
-const database = knex(knexConfig);
-
 class Contenedor {
-  constructor(nameTbl) {
-    this.nameTbl = nameTbl;
-  }
-  
-  async save(obj){
-    try{      
-      return await database(this.nameTbl).insert(obj);
-    }catch(e){
-      console.log(e)
-    }
+  constructor(Schema) {
+    this.Schema = Schema
   }
 
-   async getById(id){
-    try{
-      return await database(this.nameTbl)
-        .select()
-        .where(`${this.nameTbl}id`, id);
-    }catch(e){
-      console.log(e)
-    }
-   }
-
-   async update(cont){
-    try{
-      await fs.promises.writeFile(this.nameFile, JSON.stringify(cont)); 
-    }
-    catch(err){
-      console.log("error", err);
+  async save(object){
+    try {
+      let obj = await new this.Schema(object).save()
+      return obj.id;
+    } catch (err) {
+      console.log(err)
     }
   }
 
-   async getAll(){
-    try{
-      // devuelvo todo lo que tiene la tabla
-      return await database(this.nameTbl)
-        .select();
-    }catch(e){
-      console.log(e)
-    }
-   }
-
-  async deleteById(id){
-    try{
-      await database(this.nameTbl)
-        .del()
-        .where(`${this.nameTbl}id`, id);
-    }catch(e){
-      console.log(e);
+  async getAll(){ 
+    try {
+      return await this.Schema.find();      
+    } catch (err) {
+      console.error(err)
     }
   }
 }

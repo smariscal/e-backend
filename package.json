@@ -25,9 +25,14 @@
     "express": "^4.18.1",
     "express-handlebars": "^6.0.6",
     "knex": "^2.2.0",
+    "mongoose": "^6.6.0",
     "mysql": "^2.18.1",
     "nodemon": "^2.0.19",
+    "normalizr": "^3.6.2",
     "pug": "^3.0.2",
     "socket.io": "^4.5.1"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^7.5.0"
   }
 }

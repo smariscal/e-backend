@@ -1,11 +1,14 @@
 const express = require('express');
-const routerProducts = require('./routes/products');
+const routerProductsTest = require('./routes/products-test');
 const handlebars = require('express-handlebars');
 const http = require('http');
 const app = express();
 const server = http.createServer(app);
 const Contenedor = require('./contenedor.js');
 const { Server } = require('socket.io');
+const connectToMongoDB = require('./mongodb');
+const { normalizeMsg } = require('./normalizr.js')
+const Message = require('./mongodb/schemas/message');
 const io = new Server(server);
 const dotenv = require("dotenv");
 dotenv.config();
@@ -31,31 +34,33 @@ app.set("view engine", "hbs");
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-let container = new Contenedor("product");
-let container2 = new Contenedor("message");
-
+// connect mongoDB
+connectToMongoDB()
+  .then(() => console.log('conectado correctamente con mongoDB'))
+  .catch((err) => console.error('Error al conectar a mongoDB ' + err))
+// Socket messages and products
+const container2 = new Contenedor(Message);
 io.on("connection", async (socket) => {
   // tomo los mensajes hasta el momento
-  io.emit("update-messages", await container2.getAll());
+  const mensaje = await container2.getAll();
+  io.emit("update-messages", normalizeMsg(mensaje));
   // tomo los productos hasta el momento
-  socket.emit("products", await container.getAll());
+  socket.emit("products");
   // posteo mensaje y lo grabo
   socket.on("post-message", async (msg) => {
-    const message = {
-      ...msg,
-      messagesocketid: socket.id
-    };
-    await container2.save(message);
-    io.emit("update-messages", await container2.getAll());
+    await container2.save(msg);
+    const mensaje = await container2.getAll();
+    io.emit("update-messages", normalizeMsg(mensaje));
   });
 });
 
+// routes
 app.get('/',(req, res) =>{
   res.render("main");
 })
+app.use("/api/products-test", routerProductsTest);
 
-app.use("/products", routerProducts);
-
+// liste server
 const listen = server.listen(PORT, ()=> {
   console.log(`Servidor en puerto: ${PORT}`)
 });
