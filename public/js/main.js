@@ -4,11 +4,10 @@ socket.on("connect", () => {
   console.log("Connected to server");
 });
 
-socket.on("products", () => {
-  let productos;
-  fetch('http://localhost:3000/api/products-test')
-    .then(res => res.json())
-    .then(data => productos = data)
+socket.on("products", async() => {
+  const data = await fetch('http://localhost:3000/api/products-test');
+  const productos = await data.json();
+
   fetch("http://localhost:3000/products.hbs")
     .then((res) => res.text())
     .then((text) => {
@@ -48,26 +47,34 @@ createMessage = (msg) => {
 };
 
 sendMessage = () => {
-  const id = document.getElementById("messageid").value;
-  const name = document.getElementById("messagename").value;
-  const lastname = document.getElementById("messagelastname").value;
-  const age = document.getElementById("messageage").value;
-  const username = document.getElementById("messageusername").value;
-  const avatar = document.getElementById("messageavatar").value;
-  const text = document.getElementById("messagetext").value;
+  let user;
 
-  socket.emit("post-message", { 
-    author:{
-      id:id, 
-      name:name,
-      lastname:lastname,
-      age:age,
-      username:username,
-      avatar:avatar
-    },
-    text:text });
+  fetch("/login")
+  .then(response => response.json())
+  .then(data => user = data.user)
 
-  document.getElementById("messagetext").value = '';
+  if (user){
+    const id = document.getElementById("messageid").value;
+    const name = document.getElementById("messagename").value;
+    const lastname = document.getElementById("messagelastname").value;
+    const age = document.getElementById("messageage").value;
+    const username = document.getElementById("messageusername").value;
+    const avatar = document.getElementById("messageavatar").value;
+    const text = document.getElementById("messagetext").value; 
+
+    socket.emit("post-message", { 
+      author:{
+        id:id, 
+        name:name,
+        lastname:lastname,
+        age:age,
+        username:username,
+        avatar:avatar
+      },
+      text:text });
+
+    document.getElementById("messagetext").value = '';
+  }
 };
 
 clearFields = () => {
@@ -87,3 +94,11 @@ renderComp = (getMessages, denormMsg) => {
   const compresion = ((denormMsgLen - msgLen) / denormMsgLen * 100).toFixed(2);
   comp.innerHTML = (`Compresión: ${compresion}%`);
 }
+
+fetch("/login")
+  .then(response => response.json())
+  .then(data => {
+    user = data.user;
+    document.getElementById("user").innerHTML = user;
+  })
+  .catch(error => console.log(error));

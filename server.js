@@ -2,16 +2,20 @@ const express = require('express');
 const routerProductsTest = require('./routes/products-test');
 const handlebars = require('express-handlebars');
 const http = require('http');
-const app = express();
-const server = http.createServer(app);
 const Contenedor = require('./contenedor.js');
 const { Server } = require('socket.io');
-const connectToMongoDB = require('./mongodb');
-const { normalizeMsg } = require('./normalizr.js')
 const Message = require('./mongodb/schemas/message');
+const app = express();
+const server = http.createServer(app);
+const connectToMongoDB = require('./mongodb');
 const io = new Server(server);
 const dotenv = require("dotenv");
+const session = require('express-session')
+const MongoStore = require('connect-mongo');
+const mongoOptions = { useNewUrlParser: true, useUnifiedTopology: true }
+const { normalizeMsg } = require('./normalizr.js')
 dotenv.config();
+
 
 const PORT = process.env.PORT || 3000;
 
@@ -33,6 +37,20 @@ app.set("view engine", "hbs");
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+
+// Sesiones
+app.use(session({
+  //Base de datos Mongo
+  store: MongoStore.create({
+      mongoUrl: `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@smariscal.zaald0d.mongodb.net/ecommerce?retryWrites=true&w=majority`,
+      mongoOptions: mongoOptions,
+      ttl: 10,
+      retries: 0
+  }),
+  secret: "secret",
+  resave: false,
+  saveUninitialized: true
+}));
 
 // connect mongoDB
 connectToMongoDB()
@@ -56,8 +74,42 @@ io.on("connection", async (socket) => {
 
 // routes
 app.get('/',(req, res) =>{
-  res.render("main");
+  try {
+    if (req.session.user) {
+      res.render('main');
+    } else {
+      res.render('login');
+    }
+  } catch (err) {
+      console.log(err);
+  }
 })
+app.post('/login', (req, res) => {
+  req.session.user = req.body.username;
+  res.redirect('/');
+});
+
+app.get('/login', (req, res) => {
+  if (req.session.user) {
+    const user = req.session.user;
+    res.send({ user })
+  } else {
+    res.send({ userName: 'No existe' })
+  }
+});
+
+app.get('/logout', (req, res) => {
+  const username = req.session.user;
+  req.session.destroy((err) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.render('logout', {username:username});
+    }
+  });
+});
+
+// uses
 app.use("/api/products-test", routerProductsTest);
 
 // liste server
