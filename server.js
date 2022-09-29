@@ -1,5 +1,6 @@
 const express = require('express');
 const routerProductsTest = require('./routes/products-test');
+const routerUsers = require('./routes/users');
 const handlebars = require('express-handlebars');
 const http = require('http');
 const Contenedor = require('./contenedor.js');
@@ -10,10 +11,12 @@ const server = http.createServer(app);
 const connectToMongoDB = require('./mongodb');
 const io = new Server(server);
 const dotenv = require("dotenv");
-const session = require('express-session')
+const session = require('express-session');
 const MongoStore = require('connect-mongo');
-const mongoOptions = { useNewUrlParser: true, useUnifiedTopology: true }
-const { normalizeMsg } = require('./normalizr.js')
+const mongoOptions = { useNewUrlParser: true, useUnifiedTopology: true };
+const { normalizeMsg } = require('./normalizr.js');
+const passport = require('passport');
+
 dotenv.config();
 
 
@@ -44,13 +47,17 @@ app.use(session({
   store: MongoStore.create({
       mongoUrl: `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@smariscal.zaald0d.mongodb.net/ecommerce?retryWrites=true&w=majority`,
       mongoOptions: mongoOptions,
-      ttl: 10,
+      ttl: 60,
       retries: 0
   }),
   secret: "secret",
   resave: false,
   saveUninitialized: true
 }));
+
+// Inicializo passport
+app.use(passport.initialize())
+app.use(passport.session())
 
 // connect mongoDB
 connectToMongoDB()
@@ -81,13 +88,9 @@ app.get('/',(req, res) =>{
       res.render('login');
     }
   } catch (err) {
-      console.log(err);
+    console.log(err);
   }
 })
-app.post('/login', (req, res) => {
-  req.session.user = req.body.username;
-  res.redirect('/');
-});
 
 app.get('/login', (req, res) => {
   if (req.session.user) {
@@ -109,8 +112,20 @@ app.get('/logout', (req, res) => {
   });
 });
 
+app.get('/register', (req, res) => {
+  const username = req.session.user;
+  req.session.destroy((err) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.render('register');
+    }
+  });
+});
+
 // uses
 app.use("/api/products-test", routerProductsTest);
+app.use("/api/users", routerUsers);
 
 // liste server
 const listen = server.listen(PORT, ()=> {
