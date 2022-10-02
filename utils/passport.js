@@ -1,42 +1,32 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const User = require('../schemas/User');
+const User = require('../mongodb/schemas/User');
 const {Types} = require('mongoose');
+const { comparePassword, hashPassword } = require("../utils/hashPassword");
 
 // estrategia login
-passport.use("login", new LocalStrategy(async (email, password, done) => {
-  const user = req.body;
-  let existingUser = await c.checkIfEmailExists(user.email);
-  if (!existingUser) {
-    const error = new HttpError('Usuario y/o contraseña incorrecta', 403);
-    return next(error);
-  }
-  let isValidPassword = await bcrypt.compare(user.password, existingUser.password);
-  if (!isValidPassword) {
-    const error = new HttpError('Usuario y/o contraseña incorrecta', 403);
-    return next(error);
-  }
-  let token = jwt.sign(
-    { email: existingUser.email },
-    process.env.SECRET_KEY,
-    { expiresIn: '1h' },
-  );
-  return done(null, token);
+passport.use("login", new LocalStrategy(async (username, password, done) => {
+  const user = await User.findOne({ username });
+  if(user) {
+    const passHash = user.password;
+    if(!comparePassword(password, passHash))
+      return done(null, null, { message: "Usuario y/o contraseña incorrecta" });
+  } else
+    return done(null, null, { message: "Usuario y/o contraseña incorrecta" });
+  return done(null, user);
 }));
 
 // estrategia registro
-passport.use("signup", new LocalStrategy({passReqToCallback: true}, async (req, email, password, done) => {
-  const newUser = req.body;
-  let existingUser = await c.checkIfEmailExists(newUser.email);
-  if (existingUser) {
-    const error = new HttpError('Ya existe usuario registrado con ese email.', 422);
-    return next(error);
-  }
-  let hashedPassword = await bcrypt.hash(newUser.password, 12);
-  newUser.password = hashedPassword;
-  await c.save(newUser);  
-  let token = jwt.sign({ email: newUser.email }, process.env.SECRET_KEY, { expiresIn: '1h', });
-  return done(null, token);
+passport.use("signup", new LocalStrategy({passReqToCallback: true}, async (req, username, password, done) => {
+  const user = await User.findOne({ username });
+  if (user) {
+   return done(null, null, { message: "Usuario ya existente" })
+  };
+  const hashedPassword = hashPassword(password);
+  const newUser = new User({ username, password: hashedPassword  });
+  await newUser.save();
+
+  return done(null, newUser);
 }));
 
 // serialize // deserialize

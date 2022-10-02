@@ -14,7 +14,7 @@ const dotenv = require("dotenv");
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const mongoOptions = { useNewUrlParser: true, useUnifiedTopology: true };
-const { normalizeMsg } = require('./normalizr.js');
+const { normalizeMsg } = require('./utils/normalizr');
 const passport = require('passport');
 
 dotenv.config();
@@ -56,8 +56,8 @@ app.use(session({
 }));
 
 // Inicializo passport
-app.use(passport.initialize())
-app.use(passport.session())
+app.use(passport.initialize());
+app.use(passport.session());
 
 // connect mongoDB
 connectToMongoDB()
@@ -94,7 +94,7 @@ app.get('/',(req, res) =>{
 
 app.get('/login', (req, res) => {
   if (req.session.user) {
-    const user = req.session.user;
+    const user = req.session.user.username;
     res.send({ user })
   } else {
     res.send({ userName: 'No existe' })
@@ -102,7 +102,7 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
-  const username = req.session.user;
+  const username = req.session.user.username;
   req.session.destroy((err) => {
     if (err) {
       console.log(err);
@@ -113,7 +113,6 @@ app.get('/logout', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-  const username = req.session.user;
   req.session.destroy((err) => {
     if (err) {
       console.log(err);
@@ -121,6 +120,14 @@ app.get('/register', (req, res) => {
       res.render('register');
     }
   });
+});
+
+app.get("/failLogin", (req, res) => {
+  res.render('failLogin');
+});
+
+app.get("/failSignUp", (req, res) => {
+  res.render('failSignUp');
 });
 
 // uses

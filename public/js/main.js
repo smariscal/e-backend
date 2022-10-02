@@ -46,14 +46,12 @@ createMessage = (msg) => {
   `;
 };
 
-sendMessage = () => {
-  let user;
+sendMessage = async() => {
+  let session;
+  const data = await fetch("/login");
+  session = await data.json();
 
-  fetch("/login")
-  .then(response => response.json())
-  .then(data => user = data.user)
-
-  if (user){
+  if (session.user){
     const id = document.getElementById("messageid").value;
     const name = document.getElementById("messagename").value;
     const lastname = document.getElementById("messagelastname").value;

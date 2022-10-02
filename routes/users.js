@@ -4,19 +4,14 @@ require('../utils/passport') // importo codigo estrategias passport
 
 const routerUsers = express.Router();
 
-
-routerUsers.post("/signup", passport.authenticate("signup", {
-  failureRedirect: "/failSignUp.html",
-}) , (req, res) => {  
+routerUsers.post("/signup", passport.authenticate("signup", { failureRedirect: "/failSignUp" }) , (req, res) => {  
   req.session.user = req.user;
-  res.redirect("/profile");
+  res.redirect("/");
 });
 
-routerUsers.post("/login", passport.authenticate("login", {
-  failureRedirect: "/failLogin.html",
-}) ,(req, res) => {
+routerUsers.post("/login", passport.authenticate("login", { failureRedirect: "/failLogin" }) ,(req, res) => {
   req.session.user = req.user;
-  res.redirect('/profile');
+  res.redirect('/');
 });
 
 module.exports = routerUsers;
