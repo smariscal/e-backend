@@ -18,11 +18,10 @@ const mongoOptions = { useNewUrlParser: true, useUnifiedTopology: true };
 const { normalizeMsg } = require('./utils/normalizr');
 const passport = require('passport');
 const info = require('./utils/info');
+const port=require('./utils/minimist');
 
 dotenv.config();
 
-
-const PORT = process.env.PORT || 3000;
 
 const hbs = handlebars.create({
   extname: ".hbs",
@@ -145,9 +144,9 @@ app.use("/api/products-test", routerProductsTest);
 app.use("/api/users", routerUsers);
 app.use('/api', routeRandom) 
 
-// liste server
-const listen = server.listen(PORT, ()=> {
-  console.log(`Servidor en puerto: ${PORT}`)
+// listen server
+const listen = server.listen(port.p, ()=> {
+  console.log(`Servidor en puerto: ${port.p}`)
 });
 
 listen.on("Error", (error) => console.error(error));
