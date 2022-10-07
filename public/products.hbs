@@ -3,12 +3,14 @@
     <th>Titulo</th>
     <th>Precio</th>
     <th>imagen</th>
-  </tr> 
-  {{#each prods}}
-  <tr>
-    <td>{{this.productname}}</td>
-    <td>{{this.productprice}}</td>
-    <td><img src={{this.productthumbnail}}></td>
   </tr>
-  {{/each}}
+  <tbody>
+  {{#each prods}}
+    <tr>
+      <td>{{this.productname}}</td>
+      <td>{{this.productprice}}</td>
+      <td><img src={{this.productthumbnail}}></td>
+    </tr>
+    {{/each}}
+  </tbody>
 </table>

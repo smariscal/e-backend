@@ -1,6 +1,7 @@
 const express = require('express');
 const routerProductsTest = require('./routes/products-test');
 const routerUsers = require('./routes/users');
+const routeRandom = require('./routes/random');
 const handlebars = require('express-handlebars');
 const http = require('http');
 const Contenedor = require('./contenedor.js');
@@ -16,6 +17,7 @@ const MongoStore = require('connect-mongo');
 const mongoOptions = { useNewUrlParser: true, useUnifiedTopology: true };
 const { normalizeMsg } = require('./utils/normalizr');
 const passport = require('passport');
+const info = require('./utils/info');
 
 dotenv.config();
 
@@ -130,9 +132,18 @@ app.get("/failSignUp", (req, res) => {
   res.render('failSignUp');
 });
 
+app.get("/info", (req, res) => {
+  if (req.session.user) {
+    res.render('info', info);
+  } else {
+    res.render('login');
+  }
+});
+
 // uses
 app.use("/api/products-test", routerProductsTest);
 app.use("/api/users", routerUsers);
+app.use('/api', routeRandom) 
 
 // liste server
 const listen = server.listen(PORT, ()=> {
