@@ -18,7 +18,8 @@ const mongoOptions = { useNewUrlParser: true, useUnifiedTopology: true };
 const { normalizeMsg } = require('./utils/normalizr');
 const passport = require('passport');
 const info = require('./utils/info');
-const port=require('./utils/minimist');
+const port = require('./utils/minimist');
+const auth = require('./middleware/auth');
 
 dotenv.config();
 
@@ -81,7 +82,7 @@ io.on("connection", async (socket) => {
 });
 
 // routes
-app.get('/',(req, res) =>{
+app.get('/', (req, res) =>{
   try {
     if (req.session.user) {
       res.render('main');
@@ -93,7 +94,7 @@ app.get('/',(req, res) =>{
   }
 })
 
-app.get('/login', (req, res) => {
+app.get('/login', auth,(req, res) => {
   if (req.session.user) {
     const user = req.session.user.username;
     res.send({ user })
@@ -139,14 +140,14 @@ app.get("/info", (req, res) => {
   }
 });
 
-// uses
-app.use("/api/products-test", routerProductsTest);
-app.use("/api/users", routerUsers);
-app.use('/api', routeRandom) 
-
 // listen server
 const listen = server.listen(port.p, ()=> {
   console.log(`Servidor en puerto: ${port.p}`)
 });
 
 listen.on("Error", (error) => console.error(error));
+
+// uses
+app.use("/api/products-test", routerProductsTest);
+app.use("/api/users", routerUsers);
+app.use('/api', routeRandom) 
