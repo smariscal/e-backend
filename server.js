@@ -20,6 +20,10 @@ const passport = require('passport');
 const info = require('./utils/info');
 const port = require('./utils/minimist');
 const auth = require('./middleware/auth');
+const logger = require('./utils/loggerconfig');
+
+const compression = require('compression');
+const gzipmiddleware = compression();
 
 dotenv.config();
 
@@ -63,8 +67,8 @@ app.use(passport.session());
 
 // connect mongoDB
 connectToMongoDB()
-  .then(() => console.log('conectado correctamente con mongoDB'))
-  .catch((err) => console.error('Error al conectar a mongoDB ' + err))
+  .then(() => logger.log('info', 'conectado correctamente con mongoDB'))
+  .catch((err) => logger.log('error', 'Error al conectar a mongoDB ' + err))
 // Socket messages and products
 const container2 = new Contenedor(Message);
 io.on("connection", async (socket) => {
@@ -84,13 +88,14 @@ io.on("connection", async (socket) => {
 // routes
 app.get('/', (req, res) =>{
   try {
+    logger.log('info', `Ruta ${req.url}`)
     if (req.session.user) {
       res.render('main');
     } else {
       res.render('login');
     }
   } catch (err) {
-    console.log(err);
+    logger.log('error', `Ruta ${req.url}`)
   }
 })
 
@@ -107,7 +112,7 @@ app.get('/logout', (req, res) => {
   const username = req.session.user.username;
   req.session.destroy((err) => {
     if (err) {
-      console.log(err);
+      logger.log('error', err)
     } else {
       res.render('logout', {username:username});
     }
@@ -117,7 +122,7 @@ app.get('/logout', (req, res) => {
 app.get('/register', (req, res) => {
   req.session.destroy((err) => {
     if (err) {
-      console.log(err);
+      logger.log('error', err)
     } else {
       res.render('register');
     }
@@ -140,12 +145,25 @@ app.get("/info", (req, res) => {
   }
 });
 
-// listen server
-const listen = server.listen(port.p, ()=> {
-  console.log(`Servidor en puerto: ${port.p}`)
+app.get("/infogzip", gzipmiddleware, (req, res) => {
+  if (req.session.user) {
+    res.render('info', info);
+  } else {
+    res.render('login');
+  }
 });
 
-listen.on("Error", (error) => console.error(error));
+app.get('/*', (req, res) => {
+  logger.log("warn", `Ruta no encontrada ${req.url}`)
+  res.status(404).send(`Ruta no encontrada ${req.url}`);
+})
+
+// listen server
+const listen = server.listen(port.p, ()=> {
+  logger.log('info', `Servidor en puerto: ${port.p}`)
+});
+
+listen.on("Error", (error) => logger.log('error', err));
 
 // uses
 app.use("/api/products-test", routerProductsTest);
