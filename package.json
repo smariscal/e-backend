@@ -5,7 +5,7 @@
   "main": "contenedor.js",
   "scripts": {
     "test": "node benchmark",
-    "start": "0x server.js"
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
